@@ -1,0 +1,24 @@
+name: My First CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+    pull_requests:
+      branches:
+        - main
+jobs:
+  test: 
+    name: Test Application
+    runs-on: ubuntu-latest
+
+    steps: 
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Verify Application File
+        run: test -f index.html
+
+      - name: Display Success Message
+        run: echo "CI Pipeline Completed Successfully!"
