@@ -1,24 +1,42 @@
-name: My First CI/CD Pipeline
+name: Day 197 Advanced CI Pipeline
 
 on:
   push:
     branches:
       - main
 
-    pull_requests:
-      branches:
-        - main
+  pull_request:
+    branches:
+      - main
+
+  workflow_dispatch:
+
 jobs:
-  test: 
-    name: Test Application
+  build:
+    name: Build Application
     runs-on: ubuntu-latest
 
-    steps: 
+    steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Verify Application File
+      - name: Check Application File
         run: test -f index.html
 
-      - name: Display Success Message
-        run: echo "CI Pipeline Completed Successfully!"
+      - name: Build Success
+        run: echo "Application build completed"
+
+  test:
+    name: Test Application
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Verify HTML Content
+        run: grep -q "My First CI/CD Project" index.html
+
+      - name: Test Success
+        run: echo "Application tests passed"
