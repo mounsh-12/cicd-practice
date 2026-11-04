@@ -4,26 +4,37 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                echo 'Jenkins has started the pipeline.'
-                echo 'Source code will be checked out from GitHub.'
+                checkout scm
+                echo 'Source code checkout completed'
             }
         }
 
         stage('Build') {
             steps {
-                echo 'Building the CI/CD practice application.'
+                echo 'Building application'
             }
         }
 
         stage('Test') {
             steps {
-                echo 'Running application tests.'
+                echo 'Running automated tests'
             }
         }
 
-        stage('Docker') {
+        stage('Trivy Security Scan') {
             steps {
-                echo 'Preparing Docker image build.'
+                sh '''
+                    trivy image \
+                    --severity HIGH,CRITICAL \
+                    --exit-code 1 \
+                    mounish10/cicd-practice:day201
+                '''
+            }
+        }
+
+        stage('Deployment') {
+            steps {
+                echo 'Security scan passed. Deployment can proceed.'
             }
         }
     }
