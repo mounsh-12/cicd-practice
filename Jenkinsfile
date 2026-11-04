@@ -1,10 +1,12 @@
+
 pipeline {
     agent any
 
     stages {
         stage('Checkout') {
             steps {
-                echo 'Checking application source code'
+                checkout scm
+                echo 'Source code checkout completed'
             }
         }
 
@@ -20,30 +22,21 @@ pipeline {
             }
         }
 
-        stage('Trivy Security Scan') {
+        stage('Trivy Security Gate') {
             steps {
                 sh '''
                     trivy image \
-                    --severity HIGH,CRITICAL \
-                    mounish10/cicd-practice:day201
-                '''
-            }
-        }
-
-        stage('Security Gate') {
-            steps {
-                sh '''
-                    trivy image \
+                    --platform linux/arm64 \
                     --severity HIGH,CRITICAL \
                     --exit-code 1 \
-                    mounish10/cicd-practice:day201
+                    mounish10/cicd-practice:day203-secure
                 '''
             }
         }
 
         stage('Deployment') {
             steps {
-                echo 'Deployment allowed if security gate passes'
+                echo 'Security scan passed. Deployment can proceed.'
             }
         }
     }
