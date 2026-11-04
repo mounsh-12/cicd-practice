@@ -4,8 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
-                echo 'Source code checkout completed'
+                echo 'Checking application source code'
             }
         }
 
@@ -26,6 +25,16 @@ pipeline {
                 sh '''
                     trivy image \
                     --severity HIGH,CRITICAL \
+                    mounish10/cicd-practice:day201
+                '''
+            }
+        }
+
+        stage('Security Gate') {
+            steps {
+                sh '''
+                    trivy image \
+                    --severity HIGH,CRITICAL \
                     --exit-code 1 \
                     mounish10/cicd-practice:day201
                 '''
@@ -34,7 +43,7 @@ pipeline {
 
         stage('Deployment') {
             steps {
-                echo 'Security scan passed. Deployment can proceed.'
+                echo 'Deployment allowed if security gate passes'
             }
         }
     }
